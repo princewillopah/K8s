@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: story-pv
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  hostPath:
+    path: /data
+    type: DirectoryOrCreate
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: story-pvc
+spec:
+  volumeName: story-pv
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: data-story-env
+data:
+  folder: 'story'
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-story-deployment
+  labels:
+    app: node-story-app-label
+    tier: node-story-deployment-label
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: node-story-app
+  template:
+    metadata:
+      labels:
+        app: node-story-app
+    spec:
+      containers:
+        - name: node-story-app
+          image: princewillopah/max_k8s_volume:v1
+          env:
+            - name: STORY_FOLDER
+              valueFrom:
+                configMapKeyRef:
+                  name: data-story-env
+                  key: folder
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /app/story
+              name: story-volume
+      volumes:
+      - name: story-volume
+        persistentVolumeClaim: 
+          claimName: story-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-story-deployment-service
+spec:
+  selector:
+      app: node-story-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
+
+
+
+      
+

@@ -1,0 +1,47 @@
+=> The app consist of 3 different backend APIs which will all be containerized individually. Each container will at the end have their seperate PODs. 
+=> User API: creates users and logis users in. the user api will reach out to the auth api to get tokens
+=> Task API: it stores a new task and retuned stored tasks. it reaches out to auth api to verify tokens
+=> Auth API: it verify and generate tokens for authenthicated users
+
+=> When a request is made to create a new users, the User API talks to the Auth API to generate a token for that user. 
+=> firstly, we will create the user container and auth container in the same PODs. this means they will have POD-internal communication.
+while both User API(in a container shared with Auth) and Task API(in its own PODs) can be reached from the outside, the Ath API cannot be direcly reached from the outside
+
+=>Create the user-apl and auth api images and push both to dockerhub
+=> make sure you edit line 26 from axios.get(`http://auth/hashed-password/` + password);" to " axios.get(`http://${process.env.AUTH_ADDRESS}/hashed-password/` + password);"
+and do the same for line 58. reason is because we want to use k8s, the initial values there are for docker-compose where "äuth"  is the service name and its used as source for networking to communicate with other container
+=> do not forget to add enviroment AUTH_ADDRESS in docker compose since ${process.env.AUTH_ADDRESS} is environmental variable.
+=> the auth api liston on port 80. we dont wanna expose this since its internal and only reached by user api
+
+=> Now we to make user api container communicate with auth api container. For two containers in the same pod to communicate with one another, we use "localhost".
+
+=> Container A(i.e. user API container) sends a request to container B(i.e Auth API) using the  await axios.get(`http://${process.env.AUTH_ADDRESS}/hashed-password/` + password);. Since both are in the same pod,
+For Container a to communicate with container B, it should be "localhost", thus using that url, it should be await axios.get(`http://localhost/hashed-password/` + password); but we used environment variable to inject it there.
+
+The above works well but now we need to make sure both user api and auth api have dfferent ods. so we can connect via pod-to-pod. we will create the auth deployment and user-deployment. we will also create the different services for both. in auth-service, we will use clusterIP instaed of LoadBalancer
+
+=>For pod to pod connection such as user-api pod making request to auth-api pod, with "await axios.get(`http://${process.env.AUTH_ADDRESS}/hashed-password/` + password)", we have 3 methods:
+   => first option: we could create the auth-api pod & service, and use the generated IP(CLUSTER-IP) made by the service for the auth-api pod in the user-api container environment variable or directly nside the code where the ip is needed
+   => Second option: we could use the auth service name(e.g if the service name is auth-service) like AUTH_SERVICE_SERVICE_HOST i.e <SERVICENAME>_SERVICE_HOST in the request link "await axios.get(`http://${process.env.AUTH_SERVICE_SERVICE_HOST}/hashed-password/` + password)"
+   => Third option: we could use the auth service name(e.g if the service name is auth-service) together with the current namespace(auth-service.default) inside as the value of the environment variable of the user-api pod or directly nside the code where the ip is needed
+----
+=> thus, deploy both auth-api deployments and auth-api serivce first
+=> run "kubectl get services"to give a cluster-IP e.g 10.103.199.167
+=> add the clusterIP in the user-deployment as value of the environment vvariable so that it will be used in the code "await axios.get(`http://${process.env.AUTH_ADDRESS}/hashed-password/` + password)"
+=>deploy both user-deployment and user-service
+
+Second option, we do not need to deploy auth POD and service first. all we need to do is just use the name of the auth service and append it to "SERVICE_HOST" as <SERVICE_NAME>_SERVICE_HOST in the code where auth api POD IP is needed.
+this method, K8s user the needed serice name, generate automatic environment variable in for our code to use. since the auth api service name is "auth-service", the generated environment variable will be AUTH_SERVICE__SERVICE_HOST 
+
+
+Steps for option Three:
+We simply used the <serivce-name.current-namespace-of-the-pod> thus, if the auth-api service name is auth-api-deployment-service and it s currently running on the default namespace, then the value should be auth-api-deployment-service.default.
+
+=> now create the task api and task serice. since task api will communicate with auth-api, task api deployment and serive will be link that of user
+=> after that, pls exec into the container of task pod, and create atasks folder. that is app/tasks. else, error will show
+to exec into a container, use "kubectl exec -it <pod-name> -c <container-name> -- sh"
+
+
+
+
+

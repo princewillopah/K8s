@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: node-hello-app-prod
+    image: node-hello-app-prod
+    build:
+      context: .
+      target: production

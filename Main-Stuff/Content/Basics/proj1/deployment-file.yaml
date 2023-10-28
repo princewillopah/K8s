@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-deployment
+  labels:
+    app: node-app-label
+    tier: node-deployment-label
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: node-app
+        tier: backend-app
+  template:
+    metadata:
+      labels:
+        app: node-app
+        tier: backend-app
+    spec:
+      containers:
+      - name: nodejs-app
+        image: princewillopah/max_k8s_intro:v1
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 30

@@ -1,0 +1,63 @@
+# Ignore node_modules directory, as it contains dependencies
+node_modules/
+
+# Ignore log files and error reports
+logs/
+*.log
+npm-debug.log*
+
+# Ignore local environment configuration files
+.env
+.env.local
+.env.*.local
+
+# Ignore user-specific files
+.npm
+.pnpm
+yarn-error.log
+
+# Ignore the build output
+dist/
+build/
+out/
+
+# Ignore coverage output
+coverage/
+
+# Ignore .DS_Store files on macOS
+.DS_Store
+
+# Ignore any local configuration files
+.local-*
+
+# Ignore any terraform configuration files
+.terraform/
+
+# Exclude the .terraform directory in any subdirectory
+**/.terraform/
+
+# Exclude the .terraform directory
+/.terraform/
+/.terraform.lock.hcl
+# Exclude Terraform state files and directories
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+.terraform.lock.hcl
+# Exclude binary files downloaded during [0m[1mTerraform initialized in an empty directory![0m
+
+The directory has no Terraform configuration files. You may begin working
+with Terraform immediately by creating Terraform configuration files.[0m
+*.bin
+
+# Ignore specific inner Terraform directories and their contents
+**/terraform/
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/terraform.tfvars
+**/.terraform.lock.hcl
+# Ignore binary files
+*.bin
+
+

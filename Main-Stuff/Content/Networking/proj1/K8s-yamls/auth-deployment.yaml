@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-api-deployment
+  labels:
+    app: auth---api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: auth-api
+  template:
+    metadata:
+      labels:
+        app: auth-api
+    spec:
+      containers:
+        - name: auth-api-app
+          image: princewillopah/max_k8s_networking_auth_api:v1
+          imagePullPolicy: Always

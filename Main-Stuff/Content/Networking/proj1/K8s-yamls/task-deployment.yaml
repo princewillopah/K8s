@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-api-deployment
+  labels:
+    app: task---api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: task-api
+  template:
+    metadata:
+      labels:
+        app: task-api
+    spec:
+      containers:
+        - name: task-api-app
+          image: princewillopah/max_k8s_networking_task:v1
+          imagePullPolicy: Always
+          env:
+            - name: AUTH_ADDRESS
+              value: "auth-api-deployment-service.default"
+            - name: TASKS_FOLDER
+              value: tasks
+
