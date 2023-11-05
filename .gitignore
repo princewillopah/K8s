@@ -6,7 +6,7 @@ logs/
 *.log
 npm-debug.log*
 
-# Ignore local environment configuration files
+# Ignore local environment configuration files ..
 .env
 .env.local
 .env.*.local
