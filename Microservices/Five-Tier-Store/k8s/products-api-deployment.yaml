@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: products-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: products-api
+  template:
+    metadata:
+      labels:
+        component: products-api
+    spec:
+      containers:
+        - name: products-api
+          image: princewillopah/five_tier_products-api:v1
+          ports:
+            - containerPort: 5002
+          # env:
+          #   - name: MONGODB_HOST
+          #     value: "mongodb-cluster-ip-service"
+          # envFrom:
+          #   - configMapRef:
+          #       name: rabbitmq-configmap

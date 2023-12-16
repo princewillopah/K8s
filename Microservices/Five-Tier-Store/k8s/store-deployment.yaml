@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: store
+  template: 
+    metadata:
+      labels:
+        component: store
+    spec:
+      containers:
+        - name: store
+          image: princewillopah/five_tier_store:v1
+          ports:
+            - containerPort: 80

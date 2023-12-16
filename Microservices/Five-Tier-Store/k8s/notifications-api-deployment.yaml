@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: notifications-api
+  template:
+    metadata:
+      labels:
+        component: notifications-api
+    spec:
+      containers:
+        - name: notifications-api
+          image: princewillopah/five_tier_notification-api:v1
+          ports:
+            - containerPort: 5001
+          # env:
+          #   - name: TWILIO_ACCOUNT_SID
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: twilio-secret
+          #         key: TWILIO_ACCOUNT_SID
+          #   - name: TWILIO_AUTH_TOKEN
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: twilio-secret
+          #         key: TWILIO_AUTH_TOKEN
+          #   - name: TWILIO_NUMBER
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: twilio-secret
+          #         key: TWILIO_NUMBER
+          # envFrom:
+          #   - configMapRef:
+          #       name: rabbitmq-configmap
