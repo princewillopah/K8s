@@ -3,8 +3,8 @@ const amqp = require("amqplib");
 
 const app = express();
 
-const accountSid = "AC0f27672d15d359876080cb5b61afbab1";
-const authToken = "ea16d4d09783d92b692f3787f4249cc0";
+const accountSid = "xxx";
+const authToken = "xxx";
 const client = require("twilio")(accountSid, authToken);
 
 async function connect() {
@@ -19,7 +19,7 @@ async function connect() {
       client.messages
         .create({
           body: "Your order is out for delivery",
-          from: "+17206342312",
+          from: "+176432478",
           to: message.content.toString(),
         })
         .then((message) => console.log(message.sid))
