@@ -1,0 +1,13 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: container1
+    image: ubuntu
+    command: ["/bin/bash", "-c", "while true; do echo Hello-Kubernetes; sleep 5 ; done"]
+  - name: container2
+    image: ubuntu
+    command: ["/bin/bash", "-c", "while true; do echo Second Container is still running; sleep 3 ; done"]
+  restartPolicy: Never
