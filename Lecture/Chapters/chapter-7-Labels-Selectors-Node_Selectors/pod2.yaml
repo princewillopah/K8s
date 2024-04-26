@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-without-label
+spec:
+  containers:
+    - name: containers1
+      image: ubuntu
+      command: ["/bin/bash", "-c", "while true; do echo This is Day07 of 30DaysOfKubernetes; sleep 5 ; done"]
+

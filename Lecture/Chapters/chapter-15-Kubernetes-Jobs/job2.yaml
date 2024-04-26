@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: testjob
+spec:
+  parallelism: 3 # Create 3 pods and run simultaneously
+  activeDeadlineSeconds: 40 # Pods will terminate after 40 secs(10+30(command sleep time))
+  template:
+    metadata:
+      name: testjob
+    spec:
+      containers:
+      - image: ubuntu
+        name: container1
+        command: ["/bin/bash", "-c", "sudo apt update; sleep 30"]
+      restartPolicy: Never
+

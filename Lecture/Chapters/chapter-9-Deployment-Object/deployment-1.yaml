@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: deploy-pods
+  template:
+    metadata:
+      name: ubuntu-pods
+      labels:
+        name: deploy-pods
+    spec:
+      containers:
+      - name: container1
+        image: centos
+        command: ["/bin/bash", "-c", "while true; do echo This is Day09 of 30DaysOfKubernetes; sleep 5; done"]

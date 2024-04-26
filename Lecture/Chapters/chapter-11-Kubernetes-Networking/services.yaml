@@ -1,0 +1,55 @@
+# ClusterIP
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpd-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    name: DevOps
+  type: ClusterIP
+
+---
+# NodePort
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpd-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    name: DevOps
+  type: NodePort
+
+
+---
+# Loadbalancer
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-app-service
+spec:
+  selector:
+    app: node-app
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 3000
+      nodePort: 30001
+  type: LoadBalancer
+
+---
+# ExternalName
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8-service
+  namespace: dev
+spec:
+  type: ExternalName
+  externalName: k8.learning.com

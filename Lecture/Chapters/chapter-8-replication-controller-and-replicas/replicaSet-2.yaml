@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myrs-2
+spec:
+  replicas: 2
+  selector:
+    matchExpressions:
+    - {key: Location, operator: In, values: [India, US, Russia]}
+    - {key: env, operator: NotIn, values: [testing]}
+  template:
+    metadata:
+      name: testpod7
+      labels:
+        Location: Russia
+    spec:
+      containers:
+      - name: container1
+        image: ubuntu
+        command: ["/bin/bash", "-c", "while true; do echo ReplicaSet Example; sleep 5 ; done"]

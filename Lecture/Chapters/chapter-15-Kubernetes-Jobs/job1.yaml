@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-example
+spec:
+  template:
+    metadata:
+      name: pod-example
+    spec:
+      containers:
+      - name: worker
+        image: ubuntu
+        command: ["bin/bash", "-c", "sudo apt update; sleep 30"]  # Command to execute inside the container
+      restartPolicy: Never  # Ensures that the container does not restart after completion
+  backoffLimit: 4  # Specifies the number of retries before considering the Job as failed

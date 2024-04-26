@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: testjob
+spec:
+  schedule: "* * * * *"    # Define the schedule for the CronJob (every minute in this case)
+  jobTemplate:   # Define the template for the Job to be created
+    spec:
+      template:       # Define the template for the Pods created by the Job
+        spec:
+          containers:           # Define the container(s) running in the Pods
+            - name: container1 
+              image: ubuntu              # Use the Ubuntu image for the container
+              command: ["/bin/bash", "-c", "sudo apt update; sleep 30"]               # Command to be executed in the container
+          restartPolicy: Never           # Define the restart policy for the Pods
