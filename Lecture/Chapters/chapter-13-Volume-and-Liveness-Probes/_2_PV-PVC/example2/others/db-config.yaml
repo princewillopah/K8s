@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: whattowatch-db-script
+data:
+  mysql_whattowatch.sql: |-
+    DROP DATABASE IF EXISTS whattowatch;
+    CREATE DATABASE whattowatch;

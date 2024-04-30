@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-deployment-service
+spec:
+  selector:
+      name: nginx-pods
+  ports:
+    - port: 8082
+      targetPort: 80

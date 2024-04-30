@@ -1,0 +1,43 @@
+# apiVersion: storage.k8s.io/v1
+# kind: StorageClass
+# metadata:
+#   name: sqldemo-ebs-sc
+# provisioner: ebs.csi.aws.com
+# volumeBindingMode: WaitForFirstConsumer
+
+
+
+
+
+
+
+
+
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: mysqlvol-pv
+# spec:
+#   storageClassName: manual
+#   capacity:
+#     storage: 1Gi #Size of the volume
+#   accessModes:
+#     - ReadWriteOnce #type of access
+#   awsElasticBlockStore:
+#     volumeID: vol-0de330051ca50b894   #<EBS_VOLUME_ID>
+#     fsType: ext4
+
+### for local minikube
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysqlvol-pv
+spec:
+  storageClassName: sqldemo-ebs-sc
+  capacity:
+    storage: 1Gi #Size of the volume
+  accessModes:
+    - ReadWriteOnce #type of access
+  hostPath:
+    path: "/mnt/data" #host location
+    type: DirectoryOrCreate

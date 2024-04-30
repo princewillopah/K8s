@@ -1,0 +1,44 @@
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: app-files
+# data:
+#   app.properties: |
+#     Subject1=value1
+#     Subject2=value2
+#     Subject3=value3
+#     Subject4=value4
+#     Subject5=value5
+#     Subject6=value6
+
+# ---
+
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: firstpod
+# spec:
+#   containers:
+#     - image: coolgourav147/nginx-custom
+#       name: firstcontainer
+#       imagePullPolicy: Never
+#     env:
+#       - name: valuefromenv
+#         valueFrom:
+#           configMapKeyRef:
+#           key: Subject2
+#         name: cm-from-env
+#     - name: valuefromenv2
+#     valueFrom:
+#     configMapKeyRef:
+#     key: env.sh
+#     name: cm2
+#     - name: valuefromenv3
+#     valueFrom:
+#     configMapKeyRef:
+#     key: Subject4
+#     name: cm-from-env
+
+
+
+

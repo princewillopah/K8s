@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  annotations:
+    kubernetes.io/change-cause: "Updating nginx version to latest"
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      name: nginx-pods
+  template:
+    metadata:
+      name: nginx---pods
+      labels:
+        name: nginx-pods
+    spec:
+      containers:
+      - name: container1
+        image: nginx:latest
+        ports:
+          - containerPort: 80

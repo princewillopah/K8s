@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: liveness
+  name: liveness-http
+spec:
+  containers:
+  - name: liveness
+    image: theithollow/hollowapp-blog:liveness
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 80
+      initialDelaySeconds: 3
+      periodSeconds: 3
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: 80
+      initialDelaySeconds: 3
+      periodSeconds: 3
+
+
+
+
+# This manifest includes two probes:
+
+# Liveness check doing an HTTP request against “/”
+# Readiness check doing an HTTP request agains /health

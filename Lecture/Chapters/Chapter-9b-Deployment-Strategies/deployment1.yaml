@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  annotations:
+    kubernetes.io/change-cause: "Updating nginx version to alpine"
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      name: nginx-pods
+  template:
+    metadata:
+      name: nginx---pods
+      labels:
+        name: nginx-pods
+    spec:
+      containers:
+      - name: container1
+        image: nginx:alpine
+        ports:
+          - containerPort: 80

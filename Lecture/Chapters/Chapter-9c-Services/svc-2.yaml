@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-deployment-service
+spec:
+  selector:
+      name: nginx-pods  
+  type: NodePort  #Default is "ClustrIP" if type isn't specified 
+  ports:
+    - port: 8082
+      targetPort: 80  #if not spcified, value of th "port" is used i.e, targetPort: 8082 
+      # protocol: TCP   is fault if not spcified
+      # nodePort: 30001  #Random port that is not in used from 30000 - 32767 if not specified   
