@@ -1,0 +1,84 @@
+# # -------------------------------
+# #  Required
+# # -------------------------------
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: nginx-deployment
+#   labels:
+#     app: nginx
+# spec:
+#   replicas: 11  # Number of NGINX pods to run
+#   selector:
+#     matchLabels:
+#       app: nginx
+#   template:
+#     metadata:
+#       labels:
+#         app: nginx
+#     spec:
+#       affinity:
+#         nodeAffinity:
+#           requiredDuringSchedulingIgnoredDuringExecution:
+#             nodeSelectorTerms:
+#             - matchExpressions:
+#               - key: rank
+#                 operator: Lt
+#                 values:
+#                 - "5"
+#       containers:
+#       - name: nginx-app
+#         image: nginx:latest  # NGINX Docker image
+#         ports:
+#         - containerPort: 80  # Port NGINX listens on
+
+
+
+# -------------------------------
+#  prefered
+# -------------------------------
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 11  # Number of NGINX pods to run
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: rank
+                operator: Lt
+                values:
+                - "5"
+            - matchExpressions:
+              - key: department
+                operator: In
+                values:
+                - "fintech"
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 60
+            preference:
+              matchExpressions:
+              - key: department
+                operator: In
+                values:
+                - "fintech"
+                - "ecommerce"
+      containers:
+      - name: nginx-app
+        image: nginx:latest  # NGINX Docker image
+        ports:
+        - containerPort: 80  # Port NGINX listens on

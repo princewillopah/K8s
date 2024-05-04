@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 6  # Number of NGINX pods to run
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      nodeName: multinode-demo-m03
+      containers:
+      - name: nginx-app
+        image: nginx:latest  # NGINX Docker image
+        ports:
+        - containerPort: 80  # Port NGINX listens on
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment2
+  labels:
+    app: nginx
+spec:
+  replicas: 5  # Number of NGINX pods to run
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      nodeName: multinode-demo-m04
+      containers:
+      - name: nginx-app
+        image: nginx:latest  # NGINX Docker image
+        ports:
+        - containerPort: 80  # Port NGINX listens on
