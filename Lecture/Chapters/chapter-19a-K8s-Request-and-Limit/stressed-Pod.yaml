@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: stress-pod
+spec:
+  containers:
+  - name: stress-container
+    image: polinux/stress
+    command: ["stress"]
+    args: ["--cpu", "4", "--io", "2", "--vm", "2", "--vm-bytes", "128M", "--timeout", "600s"]
+    resources:
+      requests:
+        cpu: "500m"    # Request 500 millicores (0.5 cores) of CPU
+        memory: "256Mi"  # Request 256 Mebibytes of memory
+      limits:
+        cpu: "1"       # Limit to 1 core of CPU
+        memory: "1Gi" # Limit to 512 Mebibytes of memory
