@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-r
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mon
+  template:
+    metadata:
+      labels:
+        app: mon
+    spec:
+      containers:
+      - name: nginxxx
+        image: nginx:latest
+        ports:
+        - containerPort: 8080
+
+
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mon
+spec:
+  selector:
+    app: mon
+  ports:
+    - protocol: TCP
+      port: 80 
+      targetPort: 80  
+      # nodePort: 32000
+  type: NodePort
+# port: 80 # This should be the port exposed by the service
+#  targetPort: 80 #This should be the port your application is listening on // # Port on the Pods to which traffic is forwarded
+
+
+# The targetPort in a Kubernetes Service configuration specifies the port on the backend Pods to which the traffic will be forwarded. 
+# When a client sends a request to the Service, Kubernetes forwards that request to 
+# one of the Pods matching the Service's selector, and the traffic is directed to the Pods' targetPort
+  # In this case, the Service named "mon" exposes port 8080 externally, and any traffic coming to this port is 
+  # directed to the Pods labeled with app: mon on port 8080, where your application is expected to be running. 
+  # The targetPort should match the port on which your application is listening inside the Pod.

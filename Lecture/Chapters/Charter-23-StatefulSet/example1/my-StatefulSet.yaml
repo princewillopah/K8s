@@ -1,0 +1,51 @@
+apiVersion: apps/v1  # Specifies the Kubernetes API version being used for this configuration.
+kind: StatefulSet  # Defines that this YAML configuration describes a StatefulSet resource.
+
+metadata:  # Metadata section containing information about the StatefulSet.
+  name: mongo  # Specifies the name of the StatefulSet.
+
+spec:  # Defines the desired state for the StatefulSet.
+  selector:  # Defines how pods should be selected by the StatefulSet controller.
+    matchLabels:  # Specifies that pods should be selected based on labels.
+      app: mongo  # Labels used to select pods.
+
+  serviceName: "mongo"  # Specifies the name of the Kubernetes service to be used for network identity of the pods.
+
+  replicas: 3  # Specifies the desired number of replicas (pods) to maintain.
+
+  template:  # Defines the template for creating pods.
+    metadata:  # Metadata for the pod template.
+      labels:  # Labels for the pod template.
+        app: mongo  # Labels used to identify pods created from this template.
+    spec:  # Specification for the pod template.
+      containers:  # Defines the containers to run in the pod.
+        - name: mongo  # Name of the container.
+          image: mongo:latest    #4.0.8  # Docker image to use for the container.
+          args: ["--dbpath", "/data/db"]
+          env:  # Defines environment variables for the container.
+            - name: MONGO_INITDB_ROOT_USERNAME  # Specifies the name of the environment variable.
+              value: "admin"
+            - name: MONGO_INITDB_ROOT_PASSWORD  # Specifies the name of the environment variable.
+              value: "PRINCEWILL@#1980" 
+          command:  # Command to override the Docker image's default command.
+            - mongod
+            - "--bind_ip_all"
+            - --config /etc/mongod.conf
+            - rs0
+
+          volumeMounts:  # Defines volumes to mount into the container.
+            - name: mongo-pv-claim  # Name of the volume.
+              mountPath: /data/db  # Path within the container to mount the volume.
+            # - name: mongodb-config  # Name of the volume.
+            #   mountPath: /etc/mongo  # Path within the container to mount the volume.
+
+  volumeClaimTemplates:  # Defines volume claim templates for dynamically provisioning storage.
+    - metadata:  # Metadata for the volume claim template.
+        name: mongo-pv-claim  # Name of the volume claim template.
+      spec:  # Specification for the volume claim template.
+        accessModes: ["ReadWriteOnce"]  # Access mode for the volume claim.
+        storageClassName: mongodb-sc  # Storage class to use for provisioning the volume.
+        resources:  # Resource requests and limits for the volume claim.
+          requests:  # Requests for resources.
+            storage: 500Mi  # Amount of storage requested.
+

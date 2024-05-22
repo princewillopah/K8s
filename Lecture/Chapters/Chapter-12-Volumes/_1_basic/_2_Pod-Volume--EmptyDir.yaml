@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:latest
+        ports:
+        - containerPort: 27017  # not compulsory 
+        args: ["--dbpath", "/data/db"]
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: "admin"
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: "PRINCEWILL@#1980"       
+        volumeMounts:
+        - name: mongodb-storage
+          mountPath: /data/db
+      - name: container1
+        image: ubuntu
+        command: ["/bin/bash", "-c", "while true; do echo This is Day13 of 30DaysOfKubernetes; sleep 5; done"]
+        volumeMounts:
+          - name: mongodb-storage
+            mountPath: "/tmp/container1"
+      - name: container2
+        image: centos
+        command: ["/bin/bash", "-c", "while true; do echo Chak de INDIA!; sleep 5; done"]
+        volumeMounts:
+          - name: mongodb-storage
+            mountPath: "/tmp/container2"      
+      volumes:
+      - name: mongodb-storage
+        emptyDir: {}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+      nodePort: 32000
+  type: NodePort
+
