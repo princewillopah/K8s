@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-website-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-website
+  template:
+    metadata:
+      labels:
+        app: nginx-website
+    spec:
+      containers:
+      - name: nginx-website
+        image: princewillopah/nginx-test-ecommerce:v1
+        ports:
+        - containerPort: 80
