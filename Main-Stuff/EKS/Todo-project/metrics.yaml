@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-metrics-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-metrics
+  template:
+    metadata:
+      labels:
+        app: todo-metrics
+    spec:
+      containers:
+      - name: nginx
+        image: princewillopah/todo-metrics:v1
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-metrics-service
+spec:
+  type: ClusterIP
+  selector:
+    app: todo-metrics
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

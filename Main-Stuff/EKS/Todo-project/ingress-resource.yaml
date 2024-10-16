@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todo-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:eu-north-1:905418150041:certificate/e3fd257e-c8b4-45fe-8a3c-c2a197ed546c" # Your ACM ARN here
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+spec:
+  tls:
+  - hosts:
+      - princewill.com.ng
+    secretName: todo-ingress-tls # Can still be used to store certs if needed for internal purposes, but ACM handles SSL
+  rules:
+  - host: princewill.com.ng
+    http:
+      paths:
+      - path: /todo-ui
+        pathType: Prefix
+        backend:
+          service:
+            name: todo-backend-service
+            port:
+              number: 80
+      - path: /todo-backend
+        pathType: Prefix
+        backend:
+          service:
+            name: todo-backend-service
+            port:
+              number: 80
+      - path: /todo-metrics
+        pathType: Prefix
+        backend:
+          service:
+            name: todo-metrics-service
+            port:
+              number: 80
+
