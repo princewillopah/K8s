@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todo-ingress
+  namespace: my-app
+  annotations:
+   nginx.ingress.kubernetes.io/rewrite-target: /
+   kubernetes.io/ingress.class: nginx
+  #  cert-manager.io/cluster-issuer: letsencrypt-prod
+
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: princewill.com.ng
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: todo-frontend-service
+              port:
+                number: 80
+      
+  # tls:
+  #     - hosts:
+  #         - princewill.com.ng
+  #       secretName: tls-secret
