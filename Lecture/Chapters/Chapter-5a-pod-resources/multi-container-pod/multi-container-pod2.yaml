@@ -1,0 +1,202 @@
+# # Demonstrating a multi-container pod with an init container and a sidecar
+# # This example runs an Nginx web server with a logging sidecar and an init container to create a configuration file
+
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: multi-container-example
+#   labels:
+#     app: web-app
+# spec:
+#   # Init container to create a configuration file for Nginx
+#   initContainers:
+#     - name: init-config
+#       image: busybox:1.36
+#       command: ['sh', '-c', 'echo "Nginx config created" > /shared-data/init.log && echo "server { listen 80; root /usr/share/nginx/html; }" > /shared-data/nginx.conf']
+#       volumeMounts:
+#         - name: shared-data
+#           mountPath: /shared-data
+#       resources:
+#         limits:
+#           cpu: "100m"
+#           memory: "128Mi"
+#         requests:
+#           cpu: "50m"
+#           memory: "64Mi"
+
+#   # Main containers running in the pod
+#   containers:
+#     # Main application container: Nginx web server
+#     - name: web-app
+#       image: nginx:1.19
+#       ports:
+#         - containerPort: 80
+#       volumeMounts:
+#         - name: shared-data
+#           mountPath: /etc/nginx/conf.d
+#         - name: shared-logs
+#           mountPath: /var/log/nginx
+#       resources:
+#         limits:
+#           cpu: "500m"
+#           memory: "512Mi"
+#         requests:
+#           cpu: "200m"
+#           memory: "256Mi"
+
+#     # Sidecar container for logging
+#     - name: log-collector
+#       image: fluent/fluentd:v1.14-1
+#       env:
+#         - name: FLUENTD_CONF
+#           value: "fluentd.conf"
+#       volumeMounts:
+#         - name: shared-logs
+#           mountPath: /var/log/nginx
+#         - name: fluentd-config
+#           mountPath: /fluentd/etc
+#       resources:
+#         limits:
+#           cpu: "200m"
+#           memory: "256Mi"
+#         requests:
+#           cpu: "100m"
+#           memory: "128Mi"
+
+#   # Shared volumes for containers
+#   volumes:
+#     - name: shared-data
+#       emptyDir: {}
+#     - name: shared-logs
+#       emptyDir: {}
+#     - name: fluentd-config
+#       configMap:
+#         name: fluentd-config
+
+# # ConfigMap for Fluentd configuration
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: fluentd-config
+#   namespace: default
+# data:
+#   fluentd.conf: |
+#     <source>
+#       @type tail
+#       path /var/log/nginx/access.log
+#       pos_file /var/log/nginx/fluentd.pos
+#       tag nginx.access
+#       <parse>
+#         @type nginx
+#       </parse>
+#     </source>
+#     <match nginx.access>
+#       @type stdout
+#     </match>
+# ===============================================================
+# ===============================================================
+
+# Multi-container pod with an init container and a sidecar
+# Main app: Nginx web server serving content on port 80
+# Sidecar: Fluentd for collecting and outputting Nginx access logs
+# Init container: Creates Nginx configuration file
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-container-example
+  labels:
+    app: web-app
+spec:
+
+
+  # Shared volumes for containers
+  volumes:
+    - name: shared-data
+      emptyDir: {}
+    - name: shared-logs
+      emptyDir: {}
+    - name: fluentd-config
+      configMap:
+        name: fluentd-config
+
+        
+  # Init container to create a configuration file for Nginx
+  initContainers:
+    - name: init-config
+      image: busybox:1.36
+      command: ['sh', '-c', 'echo "Nginx config created" > /shared-data/init.log && echo "server { listen 80; root /usr/share/nginx/html; }" > /shared-data/nginx.conf']
+      volumeMounts:
+        - name: shared-data
+          mountPath: /shared-data
+      resources:
+        limits:
+          cpu: "100m"
+          memory: "128Mi"
+        requests:
+          cpu: "50m"
+          memory: "64Mi"
+
+  # Main containers running in the pod
+  containers:
+    # Main application container: Nginx web server
+    - name: web-app
+      image: nginx:1.19
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: shared-data
+          mountPath: /etc/nginx/conf.d
+        - name: shared-logs
+          mountPath: /var/log/nginx
+      resources:
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
+        requests:
+          cpu: "200m"
+          memory: "256Mi"
+
+    # Sidecar container for logging
+    - name: log-collector
+      image: fluent/fluentd:v1.14-1
+      env:
+        - name: FLUENTD_CONF
+          value: "fluentd.conf"
+      volumeMounts:
+        - name: shared-logs
+          mountPath: /var/log/nginx
+        - name: fluentd-config
+          mountPath: /fluentd/etc
+      resources:
+        limits:
+          cpu: "200m"
+          memory: "256Mi"
+        requests:
+          cpu: "100m"
+          memory: "128Mi"
+
+
+
+# ConfigMap for Fluentd configuration
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config
+  namespace: default
+data:
+  fluentd.conf: |
+    <source>
+      @type tail
+      path /var/log/nginx/access.log
+      pos_file /var/log/nginx/fluentd.pos
+      tag nginx.access
+      <parse>
+        @type nginx
+      </parse>
+    </source>
+    <match nginx.access>
+      @type stdout
+    </match>

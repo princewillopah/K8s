@@ -1,0 +1,13 @@
+architecture: standalone
+auth:
+  enabled: true
+  rootPassword: my-secret-password
+  username: appuser
+  password: appuserpassword
+  database: myappdb
+persistence:
+  enabled: true
+  size: 1Gi
+service:
+  type: ClusterIP
+  port: 27017

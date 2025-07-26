@@ -1,0 +1,52 @@
+apiVersion: v1                        # API version of the Kubernetes resource (Pod is v1)
+kind: Pod                             # The kind of Kubernetes object being created — here, a Pod
+metadata:                             # Metadata section provides information about the Pod
+  name: nginx-better                  # Name of the Pod object
+  namespace: my-namespace-1           # The namespace the Pod belongs to
+  labels:                             # Key-value pairs for categorizing, filtering, and selecting the Pod
+    app: nginx-better                 # Label to indicate app name
+    version: v1                       # Label for version control of the Pod
+    environment: production           # Label indicating the deployment environment
+    team: devops                      # Label to indicate responsible team
+
+spec:                                 # Specification of the desired behavior of the Pod
+  containers:                         # List of containers within the Pod
+    - name: nginx                     # Name of the container inside the Pod
+      image: nginx:1.29.0            # Docker image to use (lightweight nginx alpine version)
+      ports:                          # Ports to expose from the container
+        - containerPort: 8080         # Exposes port 8080 from the container
+          protocol: TCP               # Protocol used for the port (default is TCP)
+
+      # readinessProbe:                 # Probe to check if the container is ready to serve traffic
+      #   httpGet:                      # Use an HTTP GET request for the probe
+      #     path: /                     # Path to access on the HTTP server for readiness check
+      #     port: 8080                  # Port on the container to perform the check
+
+      # resources:                      # Defines resource constraints for the container
+      #   limits:                       # Hard limits for the container's resources
+      #     memory: "50Mi"              # Max memory the container can use is 50 MiB
+      #   requests:                     # Minimum resources the container requests
+      #     memory: "25Mi"              # Request 25 MiB memory
+      #     cpu: "250m"                 # Request 250 millicores (0.25 CPU core)
+
+      # securityContext:                # Security settings for this specific container
+      #   allowPrivilegeEscalation: false # Prevents process privilege escalation
+      #   privileged: false             # Ensures the container does not run in privileged mode
+
+      # livenessProbe:                  # Probe to check if the container is still running properly
+      #   httpGet:                      # Use an HTTP GET request for the liveness probe
+      #     path: /                     # Path to access for liveness check
+      #     port: 8080                  # Port on the container for liveness check
+      #   timeoutSeconds: 5             # Max time to wait for a response (in seconds)
+      #   failureThreshold: 3           # Number of consecutive failures before marking container as unhealthy
+      #   successThreshold: 1           # Number of consecutive successes to consider probe successful
+      #   initialDelaySeconds: 15       # Delay before the first probe is initiated (seconds after container start)
+      #   periodSeconds: 10             # Time interval between probes (in seconds)
+
+  # securityContext:                    # Pod-level security settings (applies to all containers)
+  #   seccompProfile:                   # Security mechanism for limiting system calls
+  #     type: RuntimeDefault            # Use the default Seccomp profile for the container runtime
+  #   runAsUser: 1001                   # Runs all container processes as user ID 1001
+  #   runAsGroup: 1001                  # Runs all container processes as group ID 1001
+  #   runAsNonRoot: true                # Enforces that the container does not run as root
+  # restartPolicy: Always               # Policy for restarting the Pod if it fails

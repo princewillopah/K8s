@@ -1,0 +1,9 @@
+replicaCount: 4
+image:
+  repository: princewillopah/nodeapp
+  tag: "1.0"
+  pullPolicy: IfNotPresent
+service:
+  type: NodePort
+  port: 80
+  targetPort: 3000
