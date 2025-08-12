@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-clusterissuer # Use the ClusterIssuer created by cert-manager
+    nginx.ingress.kubernetes.io/ssl-redirect: "false" # Force HTTPS
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - prince-opah.name.ng
+    secretName: prince-opah-name-ng-tls  # cert-manager will create this / # Name of the Secret to store the certificate
+  rules:
+  - host: prince-opah.name.ng
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 80
