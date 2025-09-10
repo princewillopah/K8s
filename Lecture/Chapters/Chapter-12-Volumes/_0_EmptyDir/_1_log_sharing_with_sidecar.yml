@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: emptydir-log-sharing
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["/bin/sh", "-c"]
+    args: ["while true; do echo $(date) >> /var/log/app/output.log; sleep 2; done"]
+    volumeMounts:
+    - name: shared-logs
+      mountPath: /var/log/app       # 👈 Mount point inside this container
+
+  - name: log-shipper
+    image: busybox
+    command: ["/bin/sh", "-c"]
+    args: ["tail -f /var/log/app/output.log"]
+    volumeMounts:
+    - name: shared-logs
+      mountPath: /var/log/app       # 👈 Mount point inside second container
+
+  volumes:
+  - name: shared-logs
+    emptyDir: {}                    # 👈 A temporary shared volume
+
+
+
+
+
+# 🔎 What happens here:
+
+# 1  Pod defines a volume called shared-logs of type emptyDir (lives only while the Pod exists, gets deleted when Pod is gone).
+# 2  First container (app):
+#   - Writes the current time every 2 seconds into /var/log/app/output.log.
+#   - But that path is actually the mounted volume, not the container’s private space.
+# 3  Second container (log-shipper):
+#   - Mounts the same volume at the same path (/var/log/app).
+#   - Runs tail -f to constantly read the file being written by the first container.
+# 4  Result: both containers are sharing the same file via the volume.

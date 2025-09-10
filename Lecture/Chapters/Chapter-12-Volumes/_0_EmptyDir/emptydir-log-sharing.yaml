@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: emptydir-log-sharing
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["/bin/sh", "-c"]
+    args: ["while true; do echo $(date) >> /var/log/app/output.log; sleep 5; done"]
+    volumeMounts: # here the container is mounting the volume "shared-logs" at /var/log/app in its filesystem
+    - name: shared-logs
+      mountPath: /var/log/app
+
+  - name: log-shipper
+    image: busybox
+    command: ["/bin/sh", "-c"]
+    args: ["tail -f /var/log/app/output.log"]
+    volumeMounts: # here the container is mounting the volume "shared-logs" at /var/log/app in its filesystem
+    - name: shared-logs
+      mountPath: /var/log/app
+
+  volumes:
+  - name: shared-logs
+    emptyDir: {}
