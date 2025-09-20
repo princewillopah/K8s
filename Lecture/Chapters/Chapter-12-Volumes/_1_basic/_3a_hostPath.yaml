@@ -9,7 +9,7 @@ spec:
       command: ["/bin/bash", "-c", "while true; do echo This is Day13 of 30DaysOfKubernetes; sleep 5; done"]
       volumeMounts:
         - mountPath: "/tmp/cont"
-          name: hp-vm
+          name: hp-vm  
   volumes:
     - name: hp-vm
       hostPath:

@@ -1,0 +1,7 @@
+FROM ubuntu:latest
+RUN apt update && apt install -y iputils-ping
+ENTRYPOINT ["ping", "-c", "4", "google.com"]
+
+#ENTRYPOINT: Defines the command that will always run when the container starts. Can be appended with arguments using docker run.
+
+#To completely override the ENTRYPOINT, use the --entrypoint flag (though this is rarely needed if the image is used as intended). WILL BE DISCUSSED IN DAY-4

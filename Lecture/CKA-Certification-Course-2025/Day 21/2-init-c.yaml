@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-demo-2
+  labels:
+    app: main-app
+spec:
+  initContainers:
+  - name: check-api
+    image: curlimages/curl:latest
+    command:
+      - sh
+      - -c
+      - |
+        echo 'Checking external API availability...'
+        sleep 15
+        until curl -s https://kubernetes.io > /dev/null; do
+          echo 'Waiting for external API...'
+          sleep 5
+        done
+        echo 'External API is accessible, proceeding to next init container!'
+  - name: check-svc
+    image: curlimages/curl:latest
+    command:
+      - sh
+      - -c
+      - |
+        echo 'Checking main-app Service availability...'
+        until nslookup main-app-svc.default.svc.cluster.local; do
+          echo 'Waiting for Service DNS resolution...'
+          sleep 5
+        done
+        echo 'Service is reachable, proceeding to main-app container!'
+  containers:
+  - name: main-app
+    image: nginx:latest
+
+
+  # initContainers:
+  # - name: check-api
+  #   image: curlimages/curl:latest
+  #   command: ["sh", "-c", "echo 'Checking external API availability...'; sleep 25; until curl -s https://kubernetes.io > /dev/null; do echo 'Waiting for external API...'; sleep 5; done; echo 'External API is accessible, proceeding to next init container!'"]
+
+  # - name: check-svc
+  #   image: curlimages/curl:latest
+  #   command: ["sh", "-c", "echo 'Checking main-app Service availability...'; until nslookup main-app-svc.default.svc.cluster.local > /dev/null; do echo 'Waiting for Service DNS resolution...'; sleep 5; done; echo 'Service is reachable, proceeding to main-app container!'"]
+
+  # containers:
+  # - name: main-app
+  #   image: nginx:latest

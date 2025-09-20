@@ -1,0 +1,31 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference to shared base
+resources:
+  - ../../base
+
+# Optional: Apply name prefix/suffix
+nameSuffix: -stage
+
+namePrefix: app1-
+
+labels:
+  - pairs:
+      env: stage
+    includeSelectors: true
+
+images:
+- name: nginx # Will look for container with image name nginx
+  newName: nginx
+  newTag: "1.22"
+
+commonAnnotations:
+  branch: stage
+  support: 800-800
+
+namespace: stage
+
+replicas:
+- name: nginx-deploy
+  count: 3

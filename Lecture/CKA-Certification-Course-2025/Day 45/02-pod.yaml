@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app1-pod2
+  namespace: app1-ns
+spec:
+  containers:
+  - name: python-cont
+    image: docker.io/cloudwithvarjosh/app1:1.0.0

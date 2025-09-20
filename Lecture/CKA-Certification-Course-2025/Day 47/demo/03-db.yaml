@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-svc
+  namespace: app1-ns
+spec:
+  clusterIP: None  # Headless service
+  selector:
+    app: app1
+    role: db
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+
+---
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-sts
+  namespace: app1-ns
+spec:
+  serviceName: db-svc  # Must match headless service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app1
+      role: db
+  template:
+    metadata:
+      labels:
+        app: app1
+        role: db
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "password123"

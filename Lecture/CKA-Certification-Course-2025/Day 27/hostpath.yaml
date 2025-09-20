@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-example-3
+  
+spec:
+  nodeName: my-second-cluster-worker
+  volumes:
+  - name: host-volume
+    hostPath:
+      path: /tmp/hostfile
+      type: FileOrCreate
+  containers:
+  - name: busybox-container
+    image: busybox
+    command: ["sh", "-c", "cat /data && sleep 3600"]
+    volumeMounts:
+    - mountPath: /data
+      name: host-volume

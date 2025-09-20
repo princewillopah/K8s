@@ -1,0 +1,9 @@
+apiVersion: ops.cloudwithvarjosh/v1
+kind: BackupPolicy
+metadata:
+  name: mysql-backup
+  namespace: default
+spec:
+  schedule: "0 1 * * *"
+  retentionDays: 7
+  targetPVC: mysql-data-pvc

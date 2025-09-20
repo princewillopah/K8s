@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-app
+  template:
+    metadata:
+      labels:
+        app: mongo-app
+    spec:
+      containers:
+      - name: mongo-container
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+        args: ["--dbpath", "/data/db"]
+        env:
+        - name: ENVIRONMENT
+          value: "development"
+        - name: MONGO_INITDB_DATABASE
+          value: "mydatabase"
+        - name: DB_LOCAL_URL
+          valueFrom: 
+            configMapKeyRef:
+              name: main-config
+              key: db.local.url
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: main-secret
+              key: db_username
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: main-secret
+              key: db_password
+        - name: DATABASE_URL
+          valueFrom: 
+            secretKeyRef:
+              name: main-secret
+              key: db.main.string
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: /data/db
+      volumes:
+      - name: mongo-storage
+        persistentVolumeClaim:
+              claimName: mongo-pvc

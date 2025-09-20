@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-demo
+spec:
+  initContainers:
+  - name: check-api
+    image: curlimages/curl:latest
+    command:
+      - sh
+      - -c
+      - |
+        echo 'Checking API availability...'
+        sleep 25
+        until curl -s https://kubernetes.io > /dev/null; do
+          echo 'Waiting for API...'
+          sleep 5
+        done
+        echo 'API is accessible, proceeding to main-app container!'
+  containers:
+  - name: main-app
+    image: nginx:latest
+
+
+  # initContainers:
+  # - name: check-api
+  #   image: curlimages/curl:latest
+  #   command: ["sh", "-c", "echo 'Checking API availability...'; sleep 25; until curl -s https://kubernetes.io > /dev/null; do echo 'Waiting for API...'; sleep 5; done; echo 'API is accessible, proceeding to main-app container!'"]

@@ -60,4 +60,44 @@ with Terraform immediately by creating Terraform configuration files.[0m
 # Ignore binary files
 *.bin
 
+# --------------------------------
+
+# Ignore environment-specific files
+*.env
+
+# Ignore compiled Docker images
+*.tar
+*.gz
+
+# Ignore editor or IDE-specific files
+.vscode/
+.idea/
+*.swp
+*~
+*.sublime-workspace
+*.sublime-project
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore macOS-specific files
+.DS_Store
+
+# Ignore build-related files
+build/
+dist/
+*.egg-info/
+
+# Ignore temporary or backup files
+*.bak
+*.tmp
+
+# Ignore Kubernetes config files (optional, if not needed in version control)
+*.kube/
+
+# Ignore SSL/TLS certificates and keys 
+*.key
+*.pem
+*.pub
+*.crt
 

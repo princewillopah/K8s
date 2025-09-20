@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: downwardapi-volume
+  labels:
+    app: good_app
+    owner: hr
+  annotations:
+    version: "good_version"
+spec:
+  containers:
+  - name: metadata-container
+    image: busybox
+    command: ["/bin/sh", "-c", "cat /etc/podinfo/* && sleep 3600"]
+    volumeMounts:
+    - name: downwardapi-volume
+      mountPath: /etc/podinfo
+  volumes:
+  - name: downwardapi-volume
+    downwardAPI:
+      items:
+      - path: "labels"
+        fieldRef:
+          fieldPath: metadata.labels
+      - path: "annotations"
+        fieldRef:
+          fieldPath: metadata.annotations

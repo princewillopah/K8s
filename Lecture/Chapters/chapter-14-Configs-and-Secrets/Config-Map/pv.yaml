@@ -1,0 +1,55 @@
+### for local minikube
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+spec:
+  storageClassName: local-storage
+  capacity:
+    storage: 1Gi #Size of the volume
+  accessModes:
+    - ReadWriteOnce #type of access
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/mnt/data" #host location
+    type: DirectoryOrCreate
+
+
+
+
+
+
+
+
+
+### for AWS EKS
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: mysqlvol-pv
+# spec:
+#   storageClassName: sqldemo-ebs-sc
+#   capacity:
+#     storage: 5Gi #Size of the volume
+#   accessModes:
+#     - ReadWriteOnce #type of access
+#   awsElasticBlockStore:
+#     volumeID: vol-0bbf1234567890abc #EBS Volume ID
+#     fsType: ext4 #File system type
+#     partition: 0 #Partition on the disk
+#     readOnly: false #Read and Write access
+#     #volumeAttributes:
+#       type: gp2 #EBS Volume type
+#       iopsPerGB: "10" #IOPS per GB
+#       encrypted: "false" #Encryption status
+#       kmsKeyId: "" #KMS Key ID if encrypted
+#       fsType: "ext4" #File system type
+#       partition: "0" #Partition on the disk
+#       volumeID: "vol-0bbf1234567890abc" #EBS Volume ID
+#       volumeName: "my-volume" #Volume name
+#       zone: "us-west-2a" #Availability zone
+#       tags: "key1=value1,key2=value2" #Tags to be applied to the volume
+#       iops: "100" #Provisioned IOPS
+#       throughput: "125" #Throughput in MiB/s
+#       size: "20" #Size of the volume in GiB
+#       multiAttachEnabled: "false" #Multi-attach status

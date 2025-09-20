@@ -1,0 +1,24 @@
+# kind-cluster-config.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+
+# Specify the Kubernetes version by using a specific node image
+# Visit https://hub.docker.com/r/kindest/node/tags and https://github.com/kubernetes-sigs/kind/releases for available images
+
+nodes:
+  - role: control-plane
+    image: kindest/node:v1.33.1@sha256:050072256b9a903bd914c0b2866828150cb229cea0efe5892e2b644d5dd3b34f # Replace with the Kubernetes version you want
+    extraPortMappings:
+      - containerPort: 31000 # Port inside the KIND container
+        hostPort: 31000 # Port on your local machine (host system). 
+        # If this were set to 9090, you would access the service at localhost:9090, 
+        # and traffic would be forwarded to containerPort 31000 inside the KIND cluster.
+  - role: worker
+    image: kindest/node:v1.33.1@sha256:050072256b9a903bd914c0b2866828150cb229cea0efe5892e2b644d5dd3b34f
+  - role: worker
+    image: kindest/node:v1.33.1@sha256:050072256b9a903bd914c0b2866828150cb229cea0efe5892e2b644d5dd3b34f
+networking:
+  disableDefaultCNI: true # the default CNI will not be installed
+
+
+    

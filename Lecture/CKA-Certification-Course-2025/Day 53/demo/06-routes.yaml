@@ -1,0 +1,60 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: iphone-routes
+  namespace: app1-ns
+spec:
+  parentRefs:
+    - name: gateway
+      namespace: ngf-gatewayapi-ns
+      sectionName: http
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /iphone
+      backendRefs:
+        - name: iphone-svc
+          port: 80
+
+---
+
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: android-routes
+  namespace: app1-ns
+spec:
+  parentRefs:
+    - name: gateway
+      namespace: ngf-gatewayapi-ns
+      sectionName: http
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /android
+      backendRefs:
+        - name: android-svc
+          port: 80
+
+---
+
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: desktop-routes
+  namespace: app1-ns
+spec:
+  parentRefs:
+    - name: gateway
+      namespace: ngf-gatewayapi-ns
+      sectionName: http
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: desktop-svc
+          port: 80

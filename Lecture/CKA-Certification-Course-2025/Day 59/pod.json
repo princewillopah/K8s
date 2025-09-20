@@ -1,0 +1,23 @@
+{
+  "apiVersion": "v1",
+  "kind": "Pod",
+  "metadata": {
+    "name": "two-containers-demo",
+    "namespace": "default",
+    "labels": { "app": "two-containers" }
+  },
+  "spec": {
+    "containers": [
+      {
+        "name": "web",
+        "image": "nginx:1.27",
+        "ports": [{ "containerPort": 80 }]
+      },
+      {
+        "name": "helper",
+        "image": "busybox:1.36",
+        "args": ["sh", "-c", "while true; do echo two-containers running; sleep 10; done"]
+      }
+    ]
+  }
+}

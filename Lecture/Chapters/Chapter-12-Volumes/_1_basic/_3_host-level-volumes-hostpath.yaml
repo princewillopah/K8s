@@ -1,55 +1,56 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongodb
+  name: mongo-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongodb
+      app: mongo-app
   template:
     metadata:
       labels:
-        app: mongodb
+        app: mongo-app
     spec:
       containers:
-      - name: mongodb
+      - name: mongo-container
         image: mongo:latest
         ports:
-        - containerPort: 27017  # not compulsory 
+        - containerPort: 27017
         args: ["--dbpath", "/data/db"]
         env:
         - name: MONGO_INITDB_ROOT_USERNAME
           value: "admin"
         - name: MONGO_INITDB_ROOT_PASSWORD
-          value: "PRINCEWILL@#1980"       
+          value: "PRINCEWILL1980"
         volumeMounts:
-        - name: mongodb-storage
+        - name: mongo-storage
           mountPath: /data/db
-      - name: container1
+      - name: helper1-ubuntu-container
         image: ubuntu
-        command: ["/bin/bash", "-c", "while true; do echo This is Day13 of 30DaysOfKubernetes; sleep 5; done"]
+        command: ["/bin/bash", "-c", "while true; do echo This is a test of K8S hostPath Volume; sleep 5; done"]
         volumeMounts:
-          - name: mongodb-storage
-            mountPath: "/tmp/container1"
-      - name: container2
-        image: centos
-        command: ["/bin/bash", "-c", "while true; do echo Chak de INDIA!; sleep 5; done"]
+        - name: mongo-storage
+          mountPath: "/tmp/container1"
+      - name: helper2-ubuntu-container
+        image: ubuntu
+        command: ["/bin/bash", "-c", "while true; do echo Today is beautiful!; sleep 5; done"]
         volumeMounts:
-          - name: mongodb-storage
-            mountPath: "/tmp/container2"      
+        - name: mongo-storage
+          mountPath: "/tmp/container2"
       volumes:
-      - name: mongodb-storage
-        emptyDir: {}
+      - name: mongo-storage
+        hostPath:
+          path: /data/mongo-test   # Directory on Minikube node
+          type: DirectoryOrCreate
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb
+  name: mongo-svc
 spec:
   selector:
-    app: mongodb
+    app: mongo-app
   ports:
     - protocol: TCP
       port: 27017

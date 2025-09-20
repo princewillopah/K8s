@@ -1,0 +1,30 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: red-deploy-pdb
+spec:
+  minAvailable: 3
+  # maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: red-deploy 
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: red-deploy
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: red-deploy
+  template:
+    metadata:
+      labels:
+        app: red-deploy
+    spec:
+      containers:
+        - name: web
+          image: nginx

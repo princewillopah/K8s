@@ -1,0 +1,16 @@
+apiVersion: kube-green.com/v1alpha1
+kind: SleepInfo
+metadata:
+  labels:
+    app: kube-green
+  name: sleepinfo-sample
+spec:
+  excludeRef:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: critical-app
+  sleepAt: '10:26'
+  suspendCronJobs: true
+  timeZone: Asia/Kolkata
+  wakeUpAt: '08:00'
+  weekdays: 0-6

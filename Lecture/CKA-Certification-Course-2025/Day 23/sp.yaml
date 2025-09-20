@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: startup-probe-demo
+spec:
+  containers:
+  - name: tcp-app
+    image: ubuntu:latest
+    command: ["sh", "-c", "apt update && apt install -y netcat-openbsd && nc -l -p 9444 && sleep 3600"]
+    startupProbe:
+      tcpSocket:
+        port: 9444
+      failureThreshold: 15
+      periodSeconds: 5

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: log-collector
+  namespace: logging-ns  # Common practice for system-level agents
+  labels:
+    app: log-collector
+spec:
+  selector:
+    matchLabels:
+      app: log-collector
+  template:
+    metadata:
+      labels:
+        app: log-collector
+    spec:
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"  # Allow running even on control-plane nodes (optional)
+          operator: "Exists"
+          effect: "NoSchedule"
+      containers:
+        - name: log-collector
+          image: busybox
+          command: ["/bin/sh", "-c", "while true; do echo Collecting logs...; sleep 30; done"]
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "50Mi"
+            limits:
+              cpu: "100m"
+              memory: "100Mi"
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log  # Simulate collecting logs from /var/log
+      volumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+            type: Directory

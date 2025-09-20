@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deploy
+  namespace: app1-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app1
+      role: backend
+  template:
+    metadata:
+      labels:
+        app: app1
+        role: backend
+    spec:
+      containers:
+        - name: backend
+          image: python:3.11-slim
+          command: ["python3", "-m", "http.server", "5678"]
+          ports:
+            - containerPort: 5678
+
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-svc
+  namespace: app1-ns
+spec:
+  type: ClusterIP
+  selector:
+    app: app1
+    role: backend
+  ports:
+    - protocol: TCP
+      port: 5678
+      targetPort: 5678

@@ -1,0 +1,56 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference to shared base
+resources:
+- ../../base
+
+# Optional: Apply name prefix/suffix
+nameSuffix: -dev
+
+namePrefix: app1-
+
+labels:
+- includeSelectors: true
+  pairs:
+    env: dev
+
+images:
+- name: nginx
+  newName: nginx
+  newTag: latest
+
+commonAnnotations:
+  branch: dev
+  support: 800-800
+
+namespace: dev
+
+replicas:
+- count: 2
+  name: nginx-deploy
+
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: nginx-deploy
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env
+        value:
+          - name: LOG_LEVEL
+            value: debug
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+      - op: remove
+        path: /metadata/labels/unused
+

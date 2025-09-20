@@ -1,0 +1,15 @@
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: nginx-vpa
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind:       Deployment
+    name:       nginx-deploy
+  updatePolicy:
+    # updateMode options:
+    # "Off"     - VPA only recommends resources, does NOT apply them.
+    # "Initial" - VPA sets recommended resources at pod creation, no changes after.
+    # "Auto"    - VPA automatically updates resources and restarts pods as needed.
+    updateMode: "Auto"

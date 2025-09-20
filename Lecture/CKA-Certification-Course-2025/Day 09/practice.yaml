@@ -1,0 +1,33 @@
+first_name: Prakash # String scalar
+height: 5.9 # Float scalar
+roll_number: 9 # Integer scalar
+is_engineer: true # Boolean scalar
+pending_dues: null # Null scalar
+address:       # Dictionary
+  flat_number: x-001 # String scalar
+  street: that_street # String scalar
+  state: that_state # String scalar
+  country: that_country # String scalar
+  contact: # Nested dictionary
+    phone: 000111222 # Integer scalar
+    email: prakash@example.com # String scalar
+hobbies:      # List
+  - singing # String scalar
+  - traveling # String scalar
+  - dancing # String scalar
+  - sports:  # Nested list
+      - cricket # String scalar
+      - football # String scalar
+education:    # **Dictionary with Nested List**
+  degrees:
+    - degree: Bachelors # String scalar
+      field: Computer Science # String scalar
+    - degree: Masters # String scalar
+      field: Data Science # String scalar
+work_experience:  # **List with Nested Dictionary**
+  - company: ABC Corp # String scalar
+    role: Devops Engineer # String scalar
+    duration: 3 years # String scalar
+  - company: XYZ Inc # String scalar
+    role: DevOps Consultant # String scalar
+    duration: 2 years # String scalar

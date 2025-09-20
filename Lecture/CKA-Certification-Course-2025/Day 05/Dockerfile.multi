@@ -1,0 +1,30 @@
+# Build Stage: Preparing the application for production
+FROM python:3.9-slim AS build  
+
+# Set the working directory inside the container to /app
+WORKDIR /app  
+
+# Copy the app.py file from the host into the container
+COPY app.py app.py  
+
+# Install Flask (required for the app) and build tools (for demonstration purposes)
+RUN pip install flask && apt update && apt install -y build-essential  
+
+# Runtime Stage: Lightweight image for running the application
+FROM python:3.9-slim  
+
+# Set the working directory inside the container to /app
+WORKDIR /app  
+
+# We copy only the necessary files from the build stage
+COPY --from=build /app .  
+
+# Install Flask (to ensure it’s available in the runtime image)
+RUN pip install flask  
+
+# Expose port 5000 for the container
+EXPOSE 5000  
+
+# Define the executable and arguments for the container
+ENTRYPOINT [ "python" ]  
+CMD [ "app.py" ]  

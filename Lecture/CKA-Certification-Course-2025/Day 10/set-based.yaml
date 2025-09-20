@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: example-rs
+spec:
+  replicas: 3
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - nginx
+          - apache
+      - key: environment
+        operator: NotIn
+        values:
+          - development
+      - key: tier
+        operator: Exists
+      - key: debug
+        operator: DoesNotExist
+  template:
+    metadata:
+      labels:
+        app: nginx
+        environment: production
+        tier: frontend
+        # Do not add a "debug" label here;
+        # it will break the selector condition.
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx

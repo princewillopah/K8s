@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-app
+  template:
+    metadata:
+      labels:
+        app: mongo-app
+    spec:
+      containers:
+      - name: mongo-container
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+        args: ["--dbpath", "/data/db"]
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: "admin"
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: "PRINCEWILL1980"
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: /data/db
+      - name: helper1-ubuntu-container
+        image: ubuntu
+        command: ["/bin/bash", "-c", "while true; do echo This is a test of K8S EBS Volume; sleep 5; done"]
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: "/tmp/container1"
+      - name: helper2-ubuntu-container
+        image: ubuntu
+        command: ["/bin/bash", "-c", "while true; do echo Today is beautiful!; sleep 5; done"]
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: "/tmp/container2"
+      volumes:
+      - name: mongo-storage
+        persistentVolumeClaim:
+          claimName: mongo-pvc

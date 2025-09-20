@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-pod
+  labels:
+    app: logging-demo
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx:1.25
+    ports:
+    - containerPort: 80
+    # Nginx automatically logs access/error logs to stdout/stderr
+
+  - name: busybox-container
+    image: busybox:1.36
+    command: ["sh", "-c"]
+    args:
+      - |
+        while true; do
+          # Write a log message to STDOUT (file descriptor 1)
+          # ">&1" means redirect output to stdout
+          # Alternative forms: "1>" or just ">"
+          echo "Busybox log: $(date) - processing data" >&1
+          
+          # Write a log message to STDERR (file descriptor 2)
+          # ">&2" means redirect output to stderr
+          # Alternative form: "2>"
+          echo "Busybox error: $(date) - something went wrong" >&2
+          
+          # Sleep for 10 seconds before writing again
+          sleep 10
+        done

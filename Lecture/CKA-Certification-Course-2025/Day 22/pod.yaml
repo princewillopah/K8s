@@ -1,0 +1,12 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: example-job
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: job-container
+        image: busybox
+        command: ["echo", "Hello, Kubernetes!"]

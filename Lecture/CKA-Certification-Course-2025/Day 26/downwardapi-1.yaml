@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: downwardapi-example
+  labels:
+    app: demo
+spec:
+  containers:
+  - name: metadata-container
+    image: busybox
+    command: ["/bin/sh", "-c", "env && sleep 3600"] 
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace

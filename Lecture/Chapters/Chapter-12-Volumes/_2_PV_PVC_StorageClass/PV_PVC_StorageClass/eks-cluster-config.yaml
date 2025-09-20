@@ -1,0 +1,39 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: prod-mongo-eks
+  region: us-east-1
+  version: "1.30"  # Latest stable EKS version
+  tags:
+    owner: Princewill-Opah
+    bu: cwvj
+    environment: prod
+    project: pvcpv-training
+availabilityZones:
+  - us-east-1a
+  - us-east-1b
+  - us-east-1c
+iam:
+  withOIDC: true  # Required for CSI driver service account
+managedNodeGroups:
+  - name: prod-workers
+    instanceType: t3.small
+    minSize: 2
+    maxSize: 5  # Auto-scale for production
+    # desiredCapacity: 3
+    volumeSize: 20  # Root EBS for nodes
+    ssh:
+      allow: false  # disable SSH for prod
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        externalDNS: false
+        certManager: false
+        ebs: true  # Allows nodes to attach EBS
+        fsx: false
+        efs: false
+        albIngress: true
+        xRay: false
+        cloudWatch: false
+    labels:
+      lifecycle: ec2-autoscaler
