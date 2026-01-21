@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopSphere</title>
+
+    <!-- Google Fonts: Inter + Playfair Display -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Tailwind via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              display: ['Playfair Display', 'serif']
+            },
+            colors: {
+              primary: {
+                600: '#4f46e5',
+                700: '#4338ca',
+              },
+              dark: {
+                800: '#1e293b',
+                900: '#0f172a',
+              }
+            },
+            backgroundImage: {
+              'hero': 'url("https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80")',
+              'footer': 'url("https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80")',
+              'features': 'url("https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80")'
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body { 
+        font-family: 'Inter', sans-serif;
+        background-color: #f8fafc;
+      }
+      .card-hover:hover { 
+        transform: translateY(-4px); 
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+      .btn-primary { 
+        @apply bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300;
+      }
+      .btn-outline {
+        @apply border border-white text-white hover:bg-white hover:text-gray-900 px-6 py-3 rounded-lg font-medium transition-all duration-300;
+      }
+      .nav-link {
+        @apply text-gray-700 hover:text-primary-600 transition-colors duration-300;
+      }
+      .feature-card {
+        @apply bg-white bg-opacity-90 backdrop-blur-sm rounded-xl p-6 shadow-lg;
+      }
+
+      .text-dark {
+        color: #1e293b;
+      }
+      .text-muted {
+        color: #64748b;
+      }
+      .feature-card h3 {
+        @apply text-dark;
+      }
+      .feature-card p {
+        @apply text-muted;
+      }
+      footer a:not(.btn) {
+        @apply text-gray-400 hover:text-white;
+      }
+
+ /* Primary Button - Brighter version */
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-400 text-white px-6 py-3 rounded-lg font-medium 
+           transition-all duration-300 shadow-md hover:shadow-lg;
+  }
+
+  /* Outline Button - More visible version */
+  .btn-outline {
+    @apply border-2 border-white text-white hover:bg-white hover:text-gray-900 px-6 py-3 
+           rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg
+           hover:border-primary-100;
+  }
+
+  /* Make outline button text bolder */
+  .btn-outline {
+    font-weight: 500;
+  }
+
+ .feature-card {
+    @apply bg-white bg-opacity-90 backdrop-blur-sm rounded-xl p-8 shadow-lg hover:shadow-xl 
+           transition-shadow duration-300;
+  }
+  
+
+/* Dark feature cards */
+  .dark-feature-card {
+    @apply bg-gray-900 bg-opacity-80 rounded-xl p-8 shadow-lg hover:shadow-xl 
+           transition-shadow duration-300;
+  }
+  
+  .dark-feature-card h3 {
+    @apply text-white text-2xl font-bold mb-3;
+  }
+  
+  .dark-feature-card p {
+    @apply text-gray-300;
+  }
+  
+  .dark-feature-card .icon {
+    @apply text-primary-400 text-4xl mb-4;
+  }
+
+  /* Hero buttons for dark backgrounds */
+  .hero-btn-solid {
+    @apply bg-white bg-opacity-20 hover:bg-opacity-30 text-white 
+           border border-white border-opacity-50 hover:border-opacity-100 
+           px-6 py-3 rounded-lg font-medium transition-all duration-300 
+           shadow-md hover:shadow-lg;
+  }
+  
+  .hero-btn-outline {
+    @apply bg-transparent hover:bg-white hover:bg-opacity-10 text-white 
+           border-2 border-white px-6 py-3 rounded-lg font-medium 
+           transition-all duration-300 shadow-md hover:shadow-lg;
+  }
+
+/* If you want even wider cards, adjust the grid columns */
+.product-grid {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+/* For larger screens, you might want */
+@media (min-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+}
+/* Add to your styles */
+.product-image {
+  transition: transform 0.3s ease;
+}
+.product-card:hover .product-image {
+  transform: scale(1.03);
+}
+
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

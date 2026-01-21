@@ -1,0 +1,51 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-seed-egress
+  namespace: shopsphere
+spec:
+  podSelector:
+    matchLabels:
+      app: db-seed
+  policyTypes:
+    - Egress
+  egress:
+
+    - to:    # DNS
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+
+    - to:    # Backend API
+        - podSelector:
+            matchLabels:
+              app: backend
+      ports:
+        - protocol: TCP
+          port: 5000
+
+    - to:    # MongoDB
+        - podSelector:
+            matchLabels:
+              app: mongo
+      ports:
+        - protocol: TCP
+          port: 27017
+
+# -----------------------------------------------------------------------------
+# Explanation:
+# -----------------------------------------------------------------------------
+# This NetworkPolicy allows the db-seed job pods to:
+# 1. Perform DNS resolution by allowing egress to the kube-dns service on ports 53 (UDP and TCP).
+# 2. Communicate with the backend API pods on port 5000.
+# 3. Access MongoDB pods on the default MongoDB port (27017).
+# This setup ensures that the db-seed job can function correctly while adhering to the security constraints of the shopsphere namespace.
+# -----------------------------------------------------------------------------

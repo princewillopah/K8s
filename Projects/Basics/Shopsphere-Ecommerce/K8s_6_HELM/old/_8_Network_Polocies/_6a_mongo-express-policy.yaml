@@ -1,0 +1,27 @@
+# Restrict mongo-express: only allow admin access (optional), but block all by default
+# WARNING: mongo-express should NOT be exposed in production.
+# If you must keep it, restrict ingress to specific IPs or remove entirely.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: restrict-mongo-express
+  namespace: shopsphere
+spec:
+  podSelector:
+    matchLabels:
+      app: mongo-express
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - {}  # TEMPORARY: allows any ingress (NodePort). Replace with IP whitelist if possible.
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: mongo
+    ports:
+    - protocol: TCP
+      port: 27017
+
+# ⚠️ Security Warning: mongo-express is a dev tool. In production, delete it. If retained, expose only via authenticated Ingress with IP whitelisting and TLS. Do not rely on NetworkPolicy alone for public exposure.

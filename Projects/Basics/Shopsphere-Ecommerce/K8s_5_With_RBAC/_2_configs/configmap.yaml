@@ -1,0 +1,30 @@
+# 2. CONFIGMAPS (Non-sensitive configuration)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: shopsphere
+data:
+  mongo-database: shopsphereDB
+  port: "5000"
+  cors-origin: "*"
+  mongo-auth-source: admin
+  node-env: production
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-config
+  namespace: shopsphere
+data:
+  mongo-image: mongo:6.0
+  storage-size: 5Gi
+
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: mongo-uri-config
+#   namespace: shopsohere
+# data:
+#   mongo-uri: mongodb://admin:$(MONGO_ROOT_PASSWORD)@mongo.shopsohere.svc.cluster.local:27017/shopsphereDB?authSource=admin

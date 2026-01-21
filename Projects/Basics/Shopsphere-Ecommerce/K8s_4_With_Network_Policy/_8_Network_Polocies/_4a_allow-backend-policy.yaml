@@ -1,0 +1,65 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: shopsphere
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  - Egress
+
+  ingress: 
+  - from:  # 1. Only allow the Frontend with label app: frontend to call this API
+    - podSelector:
+        matchLabels:
+          app: frontend
+    ports:
+    - protocol: TCP
+      port: 5000
+
+  egress:
+  - to:  # 2. Allow backend to communicate with MongoDB on port 27017
+      - podSelector:
+          matchLabels:
+            app: mongo
+    ports:
+    - protocol: TCP
+      port: 27017
+
+  # - to:  # 3. Allow backend to perform DNS resolution
+  #     - namespaceSelector:
+  #         matchLabels:
+  #           kubernetes.io/metadata.name: kube-system
+  #       podSelector:
+  #         matchLabels:
+  #           k8s-app: kube-dns
+  #   ports:
+  #   - protocol: UDP
+  #     port: 53
+  #   - protocol: TCP
+  #     port: 53
+ 
+  # - to: # 4. Allow backend to connect to Postgres DB in infrastructure namespace on port 5432
+  #     - namespaceSelector:
+  #         matchLabels:
+  #           kubernetes.io/metadata.name: infrastructure
+  #       podSelector:
+  #         matchLabels:
+  #           app: postgres
+  #   ports:
+  #   - protocol: TCP
+  #   port: 5432
+
+# -----------------------------------------------------------------------------
+# Explanation:
+# -----------------------------------------------------------------------------
+# This NetworkPolicy restricts the backend pods to:
+# 1. Accept traffic only from frontend pods on port 5000.
+# 2. Communicate with MongoDB pods on port 27017.
+# 3. (Commented Out) Perform DNS resolution by allowing egress to CoreDNS pods.
+# 4. (Commented Out) Connect to Postgres database pods in the infrastructure namespace on port 5432.
+# This setup ensures that the backend can only interact with the necessary components, enhancing the security of the application.
+# -----------------------------------------------------------------------------

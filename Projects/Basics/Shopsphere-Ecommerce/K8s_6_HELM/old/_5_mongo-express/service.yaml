@@ -1,0 +1,14 @@
+# 10. MONGO EXPRESS SERVICE
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-express
+  namespace: shopsphere
+spec:
+  type: NodePort
+  selector:
+    app: mongo-express
+  ports:
+    - port: 8081
+      targetPort: 8081
+      nodePort: 30081

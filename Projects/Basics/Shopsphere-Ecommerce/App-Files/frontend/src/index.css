@@ -1,0 +1,22 @@
+/* shopsphere/frontend/src/index.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional: Add global reset and font */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+}
+
+/* Prevent layout shift */
+img, svg {
+  max-width: 100%;
+  height: auto;
+}

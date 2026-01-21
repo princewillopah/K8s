@@ -1,0 +1,79 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: shopsohere-ecomms-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - ./config/mongodb.env
+    volumes:
+      - shopsohere-mongo-data:/data/db
+    networks:
+      - shopsohere-network
+
+  seed:
+    build: ./backend
+    command: npm run seed
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - shopsohere-network
+
+
+
+  mongo-express:
+    image: mongo-express
+    container_name: shopsohere-ecomms-mongo-express
+    restart: always
+    env_file:
+      - ./config/mongo-express.env
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb
+    networks:
+      - shopsohere-network
+
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shopsohere-ecomms-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./config/backend.env
+    depends_on:
+      - seed
+    networks:
+      - shopsohere-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: shopsohere-ecomms-frontend
+    restart: always
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    networks:
+      - shopsohere-network
+
+volumes:
+  shopsohere-mongo-data:
+
+
+networks:
+  shopsohere-network:
+    driver: bridge

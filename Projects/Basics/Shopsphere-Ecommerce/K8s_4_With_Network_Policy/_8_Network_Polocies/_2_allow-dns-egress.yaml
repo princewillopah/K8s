@@ -1,0 +1,73 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-egress-with-dns-and-k8s-api
+  namespace: shopsphere
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    # -----------------------------
+    # Allow DNS (CoreDNS)
+    # -----------------------------
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+
+    # -----------------------------
+    # Allow Kubernetes API Server
+    # via kubernetes.default Service
+    # -----------------------------
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: default
+          podSelector:
+            matchLabels:
+              component: apiserver
+      ports:
+        - protocol: TCP
+          port: 443
+
+
+
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: allow-dns-egress
+#   namespace: shopsphere
+# spec:
+#   podSelector: {}
+#   policyTypes:
+#   - Egress
+#   # Allow DNS resolution
+#   egress:
+#   - to:
+#     - namespaceSelector:
+#         matchLabels:
+#           kubernetes.io/metadata.name: kube-system
+#       podSelector:
+#         matchLabels:
+#           k8s-app: kube-dns
+#     ports:
+#     - protocol: UDP
+#       port: 53
+#     - protocol: TCP
+#       port: 53
+#   # Allow communication with Kubernetes API server
+#   - to:
+#     - ipBlock:
+#         cidr: 10.0.0.0/8
+#     ports:
+#     - port: 443
+#       protocol: TCP

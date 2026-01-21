@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-policy
+  namespace: shopsphere
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow from frontend
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    ports:
+    - port: 5000
+      protocol: TCP
+  # Allow from mongo-express (for admin)
+  - from:
+    - podSelector:
+        matchLabels:
+          app: mongo-express
+    ports:
+    - port: 5000
+      protocol: TCP
+  # Allow from db-seed job
+  - from:
+    - podSelector:
+        matchLabels:
+          job-name: db-seed
+    ports:
+    - port: 5000
+      protocol: TCP
+  egress:
+  # Backend can talk to MongoDB
+  - to:
+    - podSelector:
+        matchLabels:
+          app: mongo
+    ports:
+    - port: 27017
+      protocol: TCP

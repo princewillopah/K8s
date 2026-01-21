@@ -1,0 +1,63 @@
+# 5. BACKEND DEPLOYMENT (Using secrets properly)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: shopsphere
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: princewillopah2/shopsphere-backend:1.0
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: backend-mongo-uri
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: jwt-token
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: node-env
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: port
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5

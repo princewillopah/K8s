@@ -1,0 +1,91 @@
+# Allow frontend to receive traffic from Ingress (or external) and talk to backend
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-ingress-and-backend
+  namespace: shopsphere
+spec:
+  podSelector:
+    matchLabels:
+      app: frontend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - {}  # Allow all ingress (e.g., from Ingress Controller or NodePort)
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: backend
+    ports:
+    - protocol: TCP
+      port: 5000
+
+# 🔒 Note: If you later deploy an Ingress Controller (e.g., NGINX), restrict ingress to only allow from its namespace/pods. For now, {} is used because you're using NodePort and no Ingress exists yet.
+
+# -----------------------------------------------------------------------------
+# Explanation:
+# -----------------------------------------------------------------------------
+# This NetworkPolicy allows the frontend pods to:
+# 1. Receive traffic from any source (e.g., Ingress Controller or NodePort) by allowing all ingress.
+# 2. Communicate with backend pods on port 5000.
+# This setup ensures that the frontend can serve external requests and fetch data from the backend securely.  
+# -----------------------------------------------------------------------------
+
+# 🔒 Security Note
+# In a production environment, it's advisable to restrict the ingress rules to only allow traffic from known sources, such as specific namespaces or pod selectors associated with your Ingress Controller. This example uses a permissive ingress rule for simplicity.
+
+
+3️⃣ Frontend Policy (PUBLIC ENTRY POINT)
+
+Frontend:
+- Receives traffic only from Ingress Controller
+- Talks only to backend
+- Nothing else
+# NetworkPolicy: Allow
+Ingress Controller → Frontend
+
+This assumes NGINX Ingress. Adjust labels if you use something else
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-ingress
+  namespace: shopsphere
+spec:
+  podSelector:
+    matchLabels:
+      app: frontend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          app.kubernetes.io/name: ingress-nginx
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: ingress-nginx
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: backend
+    ports:
+    - protocol: TCP
+      port: 5000  
+
+# -----------------------------------------------------------------------------
+# Explanation:
+# -----------------------------------------------------------------------------
+# This NetworkPolicy allows the frontend pods to:
+# 1. Receive traffic only from pods in the ingress-nginx namespace with the label app.kubernetes.io/name: ingress-nginx (i.e., the NGINX Ingress Controller).   
+# 2. Communicate with backend pods on port 5000.
+# This setup ensures that the frontend can only be accessed via the Ingress Controller and can securely fetch data from the backend.  
+# -----------------------------------------------------------------------------   
+# 🔒 Security Note
+# This policy restricts access to the frontend pods, allowing only traffic from the Ingress Controller. This is a more secure configuration suitable for production environments where you want to limit exposure of the frontend
+# to only trusted sources.
+# Ensure your Ingress Controller is correctly labeled and in the expected namespace for this policy to work as intended.

@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-to-mongo
+  namespace: shopsphere
+spec:
+  podSelector: # Select MongoDB pods
+    matchLabels: # Select pods with label
+      app: mongo # Select pods with label app: mongo
+  policyTypes: # Specify the types of traffic this policy applies to
+  - Ingress # Incoming traffic
+  ingress: # Define ingress rules
+  - from: # Allow traffic from
+    - podSelector: # Select pods
+        matchLabels: # Match pods with label
+          app: backend # Match pods with label app: backend
+    - podSelector: # Select pods
+        matchLabels:
+          app: db-seed # Allow DB seed job to access MongoDB
+    ports: # Specify allowed ports
+    - protocol: TCP # TCP protocol
+      port: 27017 # MongoDB default port
+  # ingress:
+  #   - from:
+  #     - podSelector:
+  #         matchLabels:
+  #           app: backend # Allow Backend
+  #     - podSelector:
+  #         matchLabels:
+  #           app: mongo   # Allow Mongo nodes to talk to each other (Replica Sets)
+  #     ports:
+  #     - protocol: TCP
+  #       port: 27017
+# -----------------------------------------------------------------------------
+# Explanation:
+# -----------------------------------------------------------------------------
+# This NetworkPolicy allows only backend pods and the db-seed job to communicate with MongoDB pods on the default MongoDB port (27017).
+# This enhances security by restricting access to the database only to trusted components within the shopsphere namespace.
+# 
+# 
+
+# -----------------------------------------------------------------------------
+

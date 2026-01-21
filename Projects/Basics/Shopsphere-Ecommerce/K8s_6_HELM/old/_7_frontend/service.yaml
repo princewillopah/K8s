@@ -1,0 +1,14 @@
+# 8. FRONTEND SERVICE (NodePort for external access)
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: shopsphere
+spec:
+  type: NodePort
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080

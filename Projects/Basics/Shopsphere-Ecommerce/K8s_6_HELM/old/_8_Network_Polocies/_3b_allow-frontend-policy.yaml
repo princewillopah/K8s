@@ -1,0 +1,25 @@
+# Allow frontend to receive traffic from Ingress (or external) and talk to backend
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-ingress-and-backend
+  namespace: shopsphere
+spec:
+  podSelector:
+    matchLabels:
+      app: frontend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - {}  # Allow all ingress (e.g., from Ingress Controller or NodePort)
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: backend
+    ports:
+    - protocol: TCP
+      port: 5000
+
+# 🔒 Note: If you later deploy an Ingress Controller (e.g., NGINX), restrict ingress to only allow from its namespace/pods. For now, {} is used because you're using NodePort and no Ingress exists yet.

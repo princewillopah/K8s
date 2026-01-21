@@ -1,0 +1,61 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-policy
+  namespace: shopsphere
+spec:
+  podSelector:
+    matchLabels:
+      app: frontend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow external traffic on port 80 (via NodePort)
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - port: 80
+      protocol: TCP
+  # Allow from backend for API calls - Allow backend to communicate back to frontend
+  # - from:
+  #   - podSelector:
+  #       matchLabels:
+  #         app: backend
+  #   ports:
+  #   - port: 80
+  #     protocol: TCP
+  egress:
+  ## CRITICAL: Allow DNS resolution (otherwise the app breaks)
+  # - to:
+  #   - namespaceSelector:
+  #       matchLabels:
+  #         kubernetes.io/metadata.name: kube-system
+  #     podSelector:
+  #       matchLabels:
+  #         k8s-app: kube-dns
+  #   ports:
+  #   - protocol: UDP
+  #     port: 53
+  #   - protocol: TCP
+  #     port: 53
+  ## Frontend can talk to backend
+  - to:
+    - podSelector:
+        matchLabels:
+          app: backend
+    ports:
+    - port: 5000
+      protocol: TCP
+
+# -----------------------------------------------------------------------------
+# Explanation:
+# -----------------------------------------------------------------------------
+# This NetworkPolicy restricts the frontend pods to:
+# 1. Accept incoming traffic from any IP address on port 80 (NodePort).
+# 2. Communicate with backend pods on port 5000.
+# This setup allows the frontend to serve external requests while securely interacting with the backend.
+# ----------------------------------------------------------------------------- 
+ 
+ 

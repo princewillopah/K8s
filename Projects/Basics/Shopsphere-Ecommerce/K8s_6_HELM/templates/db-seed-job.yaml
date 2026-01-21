@@ -1,0 +1,62 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-seed
+  namespace: {{ .Values.namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: OnFailure  # Never 
+
+      initContainers:
+        - name: wait-for-mongo
+          image: busybox:1.28
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z mongo {{ .Values.mongo.port }}; do
+                echo "waiting for mongo";
+                sleep 5;
+              done;
+
+      containers:
+        - name: seed
+          image: {{ .Values.backend.image }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Starting DB seed..."
+              sleep 5
+              echo "Starting seed script..."
+              npm run seed
+
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.backend.secretName }}
+                  key: {{ .Values.secrets.backend.mongoUriSecretKey }}
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.backend.secretName }}
+                  key: {{ .Values.secrets.backend.jwtTokenSecretKey }}
+
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: node-env
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"

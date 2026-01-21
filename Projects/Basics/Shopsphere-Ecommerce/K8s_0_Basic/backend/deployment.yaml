@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: shopsohere
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: princewillopah2/shopsohere-backend:3.0
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              value: mongodb://admin:admin12345@mongo.shopsohere.svc.cluster.local:27017/shopsphereDB?authSource=admin
+            - name: JWT_SECRET
+              value: your_strong_secret_key_here
+            - name: NODE_ENV
+              value: production
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5

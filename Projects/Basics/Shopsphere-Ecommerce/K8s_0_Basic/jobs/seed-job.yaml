@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-seed
+  namespace: shopsohere
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: seed
+          image: princewillopah2/shopsohere-backend:3.0
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Testing MongoDB connection first..."
+              
+              # Wait a bit for any potential startup
+              sleep 10
+              
+              # Run the seed command
+              echo "Starting seed script..."
+              npm run seed
+          env:
+            - name: MONGO_URI
+              value: "mongodb://admin:admin12345@mongo.shopsohere.svc.cluster.local:27017/shopsphereDB?authSource=admin"
+            - name: JWT_SECRET
+              value: "your_strong_secret_key_here_change_me"
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3000"
